@@ -27,6 +27,15 @@ func (fs *FilerServer) GetOrHeadHandler(w http.ResponseWriter, r *http.Request, 
 	}
 
 	entry, err := fs.filer.FindEntry(context.Background(), filer2.FullPath(path))
+	
+	if fs.option.DisableDirListing && (path == "/" || (err == nil && entry.IsDirectory())) {
+
+		path = path + "index.html";
+
+	}
+
+	entry, err := fs.filer.FindEntry(context.Background(), filer2.FullPath(path))
+	
 	if err != nil {
 		if path == "/" {
 			fs.listDirectoryHandler(w, r)
